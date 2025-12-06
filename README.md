@@ -96,9 +96,28 @@ npm start
 - ✅ Eliminar clientes
 - ✅ Buscar clientes por nombre o identificación
 
-### Próximamente
-- 🔜 Gestión de pedidos
-- 🔜 Reportes y estadísticas
+### Productos y Stock
+- ✅ Crear productos con información básica (nombre, descripción, precio, SKU)
+- ✅ Registrar y actualizar stock disponible
+- ✅ Categorizar productos por tipo de accesorio médico
+- ✅ Gestión de categorías
+
+### Pedidos
+- ✅ Crear pedidos asociados a clientes
+- ✅ Visualizar todos los pedidos
+- ✅ Filtrar pedidos por estado (pendiente, en proceso, completado, cancelado)
+- ✅ Cálculo automático del monto total según productos y cantidades
+
+### Sistema de Abonos/Pagos
+- ✅ Registrar pagos parciales (abonos) sobre el monto total
+- ✅ Historial completo de abonos con fecha y método de pago
+- ✅ Saldo pendiente actualizado automáticamente
+
+### Reportes Financieros
+- ✅ Total cobrado (suma de todos los abonos)
+- ✅ Total pendiente por cobrar
+- ✅ Resumen general del estado financiero
+- ✅ Estadísticas de pedidos por estado
 
 ## 📖 API Endpoints
 
@@ -110,6 +129,49 @@ npm start
 | POST | `/api/clientes` | Crear un cliente |
 | PUT | `/api/clientes/:id` | Actualizar un cliente |
 | DELETE | `/api/clientes/:id` | Eliminar un cliente |
+
+### Categorías
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/categorias` | Listar todas las categorías |
+| GET | `/api/categorias/:id` | Obtener una categoría |
+| POST | `/api/categorias` | Crear una categoría |
+| PUT | `/api/categorias/:id` | Actualizar una categoría |
+| DELETE | `/api/categorias/:id` | Eliminar una categoría |
+
+### Productos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/productos` | Listar todos los productos |
+| GET | `/api/productos/:id` | Obtener un producto |
+| GET | `/api/productos/categoria/:categoriaId` | Productos por categoría |
+| POST | `/api/productos` | Crear un producto |
+| PUT | `/api/productos/:id` | Actualizar un producto |
+| PATCH | `/api/productos/:id/stock` | Actualizar stock |
+| DELETE | `/api/productos/:id` | Eliminar un producto |
+
+### Pedidos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/pedidos` | Listar todos los pedidos |
+| GET | `/api/pedidos/:id` | Obtener un pedido con detalles |
+| GET | `/api/pedidos/cliente/:clienteId` | Pedidos de un cliente |
+| GET | `/api/pedidos/estado/:estado` | Pedidos por estado |
+| GET | `/api/pedidos/reporte` | Reporte financiero |
+| POST | `/api/pedidos` | Crear un pedido |
+| PUT | `/api/pedidos/:id` | Actualizar un pedido |
+| PATCH | `/api/pedidos/:id/estado` | Actualizar estado |
+| DELETE | `/api/pedidos/:id` | Eliminar un pedido |
+
+### Abonos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/abonos` | Listar todos los abonos |
+| GET | `/api/abonos/:id` | Obtener un abono |
+| GET | `/api/abonos/pedido/:pedidoId` | Abonos de un pedido |
+| POST | `/api/abonos` | Registrar un abono |
+| PUT | `/api/abonos/:id` | Actualizar un abono |
+| DELETE | `/api/abonos/:id` | Eliminar un abono |
 
 ### Health Check
 | Método | Endpoint | Descripción |

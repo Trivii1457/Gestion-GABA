@@ -24,7 +24,8 @@ const ClienteForm = () => {
     if (isEditing) {
       fetchCliente();
     }
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isEditing]);
 
   const fetchCliente = async () => {
     try {
