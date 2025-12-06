@@ -1,13 +1,24 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiHome, FiUsers, FiPackage } from 'react-icons/fi';
+import { FiHome, FiUsers, FiPackage, FiShoppingBag, FiTrendingUp } from 'react-icons/fi';
 
 const Layout = ({ children }) => {
   const location = useLocation();
 
   const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
+
+  const navItems = [
+    { path: '/', icon: FiHome, label: 'Inicio', exact: true },
+    { path: '/clientes', icon: FiUsers, label: 'Clientes' },
+    { path: '/productos', icon: FiPackage, label: 'Productos' },
+    { path: '/pedidos', icon: FiShoppingBag, label: 'Pedidos' },
+    { path: '/reportes', icon: FiTrendingUp, label: 'Reportes' },
+  ];
 
   return (
     <div className="min-h-screen flex">
@@ -22,34 +33,25 @@ const Layout = ({ children }) => {
         </div>
         
         <nav className="mt-6">
-          <Link
-            to="/"
-            className={`flex items-center gap-3 px-6 py-3 transition-colors ${
-              isActive('/') && location.pathname === '/'
-                ? 'bg-white/20 border-r-4 border-gaba-light'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <FiHome size={20} />
-            <span>Inicio</span>
-          </Link>
-          
-          <Link
-            to="/clientes"
-            className={`flex items-center gap-3 px-6 py-3 transition-colors ${
-              isActive('/clientes')
-                ? 'bg-white/20 border-r-4 border-gaba-light'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <FiUsers size={20} />
-            <span>Clientes</span>
-          </Link>
+          {navItems.map(({ path, icon: Icon, label, exact }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`flex items-center gap-3 px-6 py-3 transition-colors ${
+                (exact ? location.pathname === path : isActive(path))
+                  ? 'bg-white/20 border-r-4 border-gaba-light'
+                  : 'hover:bg-white/10'
+              }`}
+            >
+              <Icon size={20} />
+              <span>{label}</span>
+            </Link>
+          ))}
         </nav>
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8 bg-gray-50">
+      <main className="flex-1 p-8 bg-gray-50 overflow-auto">
         {children}
       </main>
     </div>
