@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiTrendingUp, FiDollarSign, FiClock, FiCheckCircle, FiAlertCircle, FiShoppingBag } from 'react-icons/fi';
+import { FiTrendingUp, FiClock, FiCheckCircle, FiAlertCircle, FiShoppingBag } from 'react-icons/fi';
 import { pedidoService } from '../services/api';
 import Loading from '../components/Loading';
 

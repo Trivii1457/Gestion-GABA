@@ -27,7 +27,8 @@ const ProductoForm = () => {
     if (isEditing) {
       fetchProducto();
     }
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isEditing]);
 
   const fetchCategorias = async () => {
     try {
