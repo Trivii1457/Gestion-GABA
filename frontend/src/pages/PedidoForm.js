@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiArrowLeft, FiShoppingBag, FiPlus, FiTrash2, FiSave } from 'react-icons/fi';
+import { FiArrowLeft, FiShoppingBag, FiPlus, FiTrash2, FiSave, FiSearch } from 'react-icons/fi';
 import { pedidoService, clienteService, productoService } from '../services/api';
 import Loading from '../components/Loading';
 
@@ -21,6 +21,19 @@ const PedidoForm = () => {
   const [detalles, setDetalles] = useState([]);
   const [selectedProducto, setSelectedProducto] = useState('');
   const [cantidad, setCantidad] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProductos = useMemo(() => {
+    const term = searchQuery.trim().toLowerCase();
+    return productos
+      .filter(p => p.stock > 0)
+      .filter(p => {
+        if (!term) return true;
+        const nombre = p.nombre?.toLowerCase() || '';
+        const sku = p.sku?.toLowerCase() || '';
+        return nombre.includes(term) || sku.includes(term);
+      });
+  }, [productos, searchQuery]);
 
   useEffect(() => {
     fetchData();
@@ -232,39 +245,106 @@ const PedidoForm = () => {
             </div>
 
             <div className="card">
-              <h2 className="text-lg font-semibold mb-4">Agregar Productos</h2>
-              <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <select
-                  value={selectedProducto}
-                  onChange={(e) => setSelectedProducto(e.target.value)}
-                  className="input-field flex-1"
-                >
-                  <option value="">Seleccionar producto</option>
-                  {productos.filter(p => p.stock > 0).map(producto => (
-                    <option key={producto.id} value={producto.id}>
-                      {producto.nombre} - {producto.sku} (Stock: {producto.stock}) - {formatPrice(producto.precio)}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="number"
-                  value={cantidad}
-                  onChange={(e) => setCantidad(parseInt(e.target.value) || 1)}
-                  className="input-field w-24"
-                  min="1"
-                  placeholder="Cant."
-                />
-                <button
-                  type="button"
-                  onClick={handleAddProducto}
-                  className="btn-secondary flex items-center gap-2"
-                >
-                  <FiPlus size={18} />
-                  Agregar
-                </button>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <h2 className="text-lg font-semibold">Agregar Productos</h2>
+                <span className="text-sm text-gray-500">{filteredProductos.length} disponibles</span>
               </div>
 
-              {detalles.length > 0 && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Buscar producto
+                  </label>
+                  <div className="relative">
+                    <FiSearch className="absolute inset-y-0 left-3 my-auto text-gray-400" size={16} />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="input-field pl-10"
+                      placeholder="Nombre o código (SKU)"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Puedes seguir usando la lista desplegable o hacer clic en los resultados para seleccionar.</p>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3 items-end">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Selecciona un producto
+                    </label>
+                    <select
+                      value={selectedProducto}
+                      onChange={(e) => setSelectedProducto(e.target.value)}
+                      className="input-field h-12"
+                    >
+                      <option value="">Seleccionar producto</option>
+                      {filteredProductos.map(producto => (
+                        <option key={producto.id} value={producto.id}>
+                          {producto.nombre} - {producto.sku} (Stock: {producto.stock}) - {formatPrice(producto.precio)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cantidad
+                    </label>
+                    <input
+                      type="number"
+                      value={cantidad}
+                      onChange={(e) => setCantidad(parseInt(e.target.value) || 1)}
+                      className="input-field text-center"
+                      min="1"
+                      placeholder="Ej: 2"
+                    />
+                  </div>
+                  <div className="md:col-span-3 lg:col-span-1 flex md:block">
+                    <button
+                      type="button"
+                      onClick={handleAddProducto}
+                      className="btn-secondary w-full h-12 flex items-center justify-center gap-2"
+                    >
+                      <FiPlus size={18} />
+                      Agregar
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  <div className="flex items-center justify-between text-xs uppercase tracking-wide text-gray-500 mb-2">
+                    <span>Resultados</span>
+                    <span>{filteredProductos.length} items</span>
+                  </div>
+                  <div className="max-h-56 overflow-y-auto divide-y divide-gray-200">
+                    {filteredProductos.length === 0 && (
+                      <p className="text-sm text-gray-500 py-2">No hay productos que coincidan con la búsqueda.</p>
+                    )}
+                    {filteredProductos.slice(0,10).map(producto => (
+                      <button
+                        type="button"
+                        key={producto.id}
+                        onClick={() => setSelectedProducto(producto.id.toString())}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-white transition ${selectedProducto === producto.id.toString() ? 'bg-white shadow-sm rounded-md' : ''}`}
+                      >
+                        <div className="flex justify-between">
+                          <span className="font-medium text-gray-800">{producto.nombre}</span>
+                          <span className="text-gray-600">{formatPrice(producto.precio)}</span>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>SKU: {producto.sku || 'N/A'}</span>
+                          <span>Stock: {producto.stock}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {detalles.length > 0 && (
+              <div className="card">
+                <h2 className="text-lg font-semibold mb-4">Productos del Pedido</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50">
@@ -313,8 +393,8 @@ const PedidoForm = () => {
                     </tbody>
                   </table>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Right column - Summary */}
