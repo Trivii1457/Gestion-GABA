@@ -52,6 +52,17 @@ docker compose up --build
 docker compose up -d --build
 ```
 
+#### Variables de entorno para producción
+
+Para producción, configura las siguientes variables de entorno antes de ejecutar:
+
+```bash
+export DB_USER=tu_usuario
+export DB_PASSWORD=tu_contraseña_segura
+export DB_NAME=gaba_db
+export NODE_ENV=production
+```
+
 La aplicación estará disponible en:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:3001/api
